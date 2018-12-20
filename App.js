@@ -45,16 +45,18 @@ export default class App extends React.Component {
                         onSubmitEditing={this._addToDo}
                     />
                     <ScrollView contentContainerStyle={styles.toDos}>
-                        {Object.values(toDos).map(toDo => (
-                            <ToDo
-                                key={toDo.id}
-                                deleteToDo={this._deleteToDo}
-                                uncompleteToDo={this._uncompleteToDo}
-                                completeToDo={this._completeToDo}
-                                updateToDo={this._updateToDo}
-                                {...toDo}
-                            />
-                        ))}
+                        {Object.values(toDos)
+                            .reverse()
+                            .map(toDo => (
+                                <ToDo
+                                    key={toDo.id}
+                                    deleteToDo={this._deleteToDo}
+                                    uncompleteToDo={this._uncompleteToDo}
+                                    completeToDo={this._completeToDo}
+                                    updateToDo={this._updateToDo}
+                                    {...toDo}
+                                />
+                            ))}
                     </ScrollView>
                 </View>
             </View>
@@ -65,10 +67,17 @@ export default class App extends React.Component {
             newToDo: text
         });
     };
-    _loadToDos = () => {
-        this.setState({
-            loadToDos: true
-        });
+    _loadToDos = async () => {
+        try {
+            const toDos = await AsyncStorage.getItem("toDos");
+            const parsedToDos = JSON.parse(toDos);
+            this.setState({
+                loadToDos: true,
+                toDos: parsedToDos
+            });
+        } catch (err) {
+            console.log(err);
+        }
     };
     _addToDo = () => {
         const { newToDo } = this.state;
@@ -104,9 +113,9 @@ export default class App extends React.Component {
                 ...prevState,
                 ...toDos
             };
+            this._saveToDos(newState.toDos);
             return { ...newState };
         });
-        this._saveToDos(newState.toDos);
     };
     _uncompleteToDo = id => {
         this.setState(prevState => {
