@@ -42,6 +42,7 @@ export default class App extends React.Component {
                         placeholderTextColor={"#999"}
                         returnKeyType={"done"}
                         autoCorrect={false}
+                        underlineColorAndroid={"transparent"}
                         onSubmitEditing={this._addToDo}
                     />
                     <ScrollView contentContainerStyle={styles.toDos}>
@@ -73,7 +74,7 @@ export default class App extends React.Component {
             const parsedToDos = JSON.parse(toDos);
             this.setState({
                 loadToDos: true,
-                toDos: parsedToDos
+                toDos: parsedToDos || {}
             });
         } catch (err) {
             console.log(err);
